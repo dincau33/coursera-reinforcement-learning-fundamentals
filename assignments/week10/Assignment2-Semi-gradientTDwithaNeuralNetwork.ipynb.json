@@ -899,7 +899,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 21,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -934,7 +934,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 26,
    "metadata": {
     "deletable": false,
     "nbgrader": {
@@ -997,7 +997,7 @@
     "        \n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        self.layer_size = np.array([self.num_states, self.num_hidden_units, 1])\n",
     "        # ----------------\n",
     "\n",
     "        # Initialize the neural network's parameter\n",
@@ -1011,7 +1011,9 @@
     "\n",
     "            # ----------------\n",
     "            # your code here\n",
-    "            \n",
+    "            str_dev = np.sqrt(2.0 / self.layer_size[i])\n",
+    "            self.weights[i][\"W\"] = self.rand_generator.normal(0 , str_dev, (self.layer_size[i], self.layer_size[i+1]))\n",
+    "            self.weights[i][\"b\"] = self.rand_generator.normal(0 , str_dev, (1, self.layer_size[i+1]))\n",
     "            # ----------------\n",
     "        \n",
     "        # Specify the optimizer\n",
@@ -1050,7 +1052,8 @@
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        self.last_state = state\n",
+    "        self.last_action = self.agent_policy(state)\n",
     "        # ----------------\n",
     "\n",
     "        return self.last_action\n",
@@ -1071,7 +1074,11 @@
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        last_state_vec = one_hot(self.last_state, self.num_states)\n",
+    "        state_vec = one_hot(state, self.num_states)\n",
+    "        value_last_state = get_value(last_state_vec, self.weights)\n",
+    "        value_state = get_value(state_vec, self.weights)\n",
+    "        delta = reward + self.discount_factor * value_state - value_last_state\n",
     "        # ----------------\n",
     "\n",
     "        ### Retrieve gradients\n",
@@ -1079,7 +1086,7 @@
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        grads = get_gradient(last_state_vec, self.weights)\n",
     "        # ----------------\n",
     "\n",
     "        ### Compute g (1 line)\n",
@@ -1090,7 +1097,7 @@
     "                # g[i][param] = None\n",
     "                # ----------------\n",
     "                # your code here\n",
-    "                \n",
+    "                g[i][param] = grads[i][param] * delta\n",
     "                # ----------------\n",
     "\n",
     "        ### update the weights using self.optimizer\n",
@@ -1098,14 +1105,15 @@
     "        \n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        self.optimizer.update_weights(self.weights, g)\n",
     "        # ----------------\n",
     "\n",
     "        ### update self.last_state and self.last_action\n",
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        self.last_state = state\n",
+    "        self.last_action = self.agent_policy(state)\n",
     "        # ----------------\n",
     "\n",
     "        return self.last_action\n",
@@ -1117,12 +1125,14 @@
     "                terminal state.\n",
     "        \"\"\"\n",
     "\n",
-    "        ### compute TD error\n",
+    "        ### Compute TD error\n",
     "        # delta = None\n",
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        last_state_vec = one_hot(self.last_state, self.num_states)\n",
+    "        value_last_state = get_value(last_state_vec, self.weights)\n",
+    "        delta = reward - value_last_state\n",
     "        # ----------------\n",
     "\n",
     "        ### Retrieve gradients\n",
@@ -1130,10 +1140,10 @@
     "\n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        grads = get_gradient(last_state_vec, self.weights)\n",
     "        # ----------------\n",
     "\n",
-    "        ### Compute g\n",
+    "        ### Compute g (1 line)\n",
     "        g = [dict() for i in range(self.num_hidden_layer+1)]\n",
     "        for i in range(self.num_hidden_layer+1):\n",
     "            for param in self.weights[i].keys():\n",
@@ -1141,7 +1151,7 @@
     "                # g[i][param] = None\n",
     "                # ----------------\n",
     "                # your code here\n",
-    "                \n",
+    "                g[i][param] = grads[i][param] * delta\n",
     "                # ----------------\n",
     "\n",
     "        ### update the weights using self.optimizer\n",
@@ -1149,7 +1159,7 @@
     "        \n",
     "        # ----------------\n",
     "        # your code here\n",
-    "        \n",
+    "        self.optimizer.update_weights(self.weights, g)\n",
     "        # ----------------\n",
     "\n",
     "    def agent_message(self, message):\n",
@@ -1183,7 +1193,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 27,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -1199,7 +1209,15 @@
      "task": false
     }
    },
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "layer_size: [5 2 1]\n"
+     ]
+    }
+   ],
    "source": [
     "# -----------\n",
     "# Tested Cell\n",
@@ -1304,7 +1322,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 28,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -1396,7 +1414,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 29,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -1536,7 +1554,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 30,
    "metadata": {
     "deletable": false,
     "editable": false,
