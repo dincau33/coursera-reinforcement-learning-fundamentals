@@ -60,7 +60,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 1,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -169,7 +169,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 2,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -204,7 +204,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 7,
    "metadata": {
     "deletable": false,
     "nbgrader": {
@@ -232,7 +232,9 @@
     "    \n",
     "    # ----------------\n",
     "    # your code here\n",
-    "    \n",
+    "    psi = my_matmul(s, weights[0][\"W\"]) + weights[0][\"b\"]\n",
+    "    x = np.maximum(psi, 0)\n",
+    "    v = my_matmul(x, weights[1][\"W\"]) + weights[1][\"b\"]\n",
     "    # ----------------\n",
     "    return v"
    ]
@@ -259,7 +261,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 8,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -275,7 +277,15 @@
      "task": false
     }
    },
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Estimated value: [[-0.21915705]]\n"
+     ]
+    }
+   ],
    "source": [
     "# -----------\n",
     "# Tested Cell\n",
@@ -366,7 +376,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 16,
    "metadata": {
     "deletable": false,
     "nbgrader": {
@@ -404,7 +414,13 @@
     "\n",
     "    # ----------------\n",
     "    # your code here\n",
+    "    psi = my_matmul(s, weights[0][\"W\"]) + weights[0][\"b\"]\n",
+    "    x = np.maximum(psi, 0)\n",
     "    \n",
+    "    grads[0][\"W\"] = my_matmul(np.transpose(s), np.maximum(np.transpose(weights[1][\"W\"]), 0))\n",
+    "    grads[0][\"b\"] = np.maximum(np.transpose(weights[1][\"W\"]), 0)\n",
+    "    grads[1][\"W\"] = np.transpose(x)\n",
+    "    grads[1][\"b\"] = 1\n",
     "    # ----------------\n",
     "\n",
     "    return grads\n"
@@ -432,7 +448,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 17,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -545,7 +561,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 18,
    "metadata": {
     "deletable": false,
     "nbgrader": {
@@ -593,7 +609,7 @@
     "                \n",
     "                # ----------------\n",
     "                # your code here\n",
-    "                \n",
+    "                weights[i][param] += self.step_size * g[i][param]\n",
     "                # ----------------\n",
     "                \n",
     "        return weights"
@@ -621,7 +637,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 19,
    "metadata": {
     "deletable": false,
     "editable": false,
@@ -750,7 +766,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 20,
    "metadata": {
     "deletable": false,
     "editable": false,
